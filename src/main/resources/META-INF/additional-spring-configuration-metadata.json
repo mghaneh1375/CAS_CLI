@@ -1,0 +1,28 @@
+{
+  "properties": [
+    {
+      "name": "security.jwt.public-key",
+      "type": "java.lang.String",
+      "description": "Description for security.jwt.public-key."
+    },
+    {
+      "name": "onegini.oidc.clientId",
+      "type": "java.lang.String",
+      "description": "Description for onegini.oidc.clientId."
+    },
+    {
+      "name": "onegini.oidc.clientSecret",
+      "type": "java.lang.String",
+      "description": "Description for onegini.oidc.clientSecret."
+    },
+    {
+      "name": "onegini.oidc.issuer",
+      "type": "java.lang.String",
+      "description": "Description for onegini.oidc.issuer."
+    },
+    {
+      "name": "onegini.oidc.idTokenEncryptionEnabled",
+      "type": "java.lang.String",
+      "description": "Description for onegini.oidc.idTokenEncryptionEnabled."
+    }
+  ] }
