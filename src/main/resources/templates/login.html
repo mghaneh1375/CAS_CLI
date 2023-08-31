@@ -213,6 +213,9 @@
                         <p class="text-danger">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
                     </div>
 
+                    <input name="callback" type="hidden" required th:value="${callback}">
+                    <input name="redirectUrl" type="hidden" required th:value="${redirectUrl}">
+
                     <div class="inputBox">
 
                         <input name="username" type="text" required> <i>Username</i>

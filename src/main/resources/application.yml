@@ -15,10 +15,3 @@ spring:
       suffix: .html
   main:
     allow-bean-definition-overriding: true
-
-onegini:
-  oidc:
-    clientId: openid-client
-    clientSecret: secret
-    issuer: http://localhost:7878/oauth
-    idTokenEncryptionEnabled: false
