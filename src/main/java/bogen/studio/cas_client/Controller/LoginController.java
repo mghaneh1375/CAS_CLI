@@ -133,13 +133,14 @@ public class LoginController {
             String token = res.getBody().getObject().getString("access_token");
             request.getSession().setAttribute("token", token);
 
-            res = Unirest.post(callback)
+            HttpResponse<String> res2 = Unirest.post(callback)
                     .body(new JSONObject()
                             .put("token", token)
-                    ).asJson();
+                    ).asString();
 
             System.out.println(res.getStatus());
             System.out.println(res.getStatusText());
+            System.out.println(res2.getBody());
 
             if (res.getStatus() != 200) {
                 return;
