@@ -142,7 +142,7 @@ public class LoginController {
             System.out.println(res.getStatusText());
             System.out.println(res2.getBody());
 
-            if (res.getStatus() != 200) {
+            if (res2.getStatus() != 200) {
                 return;
             }
 
