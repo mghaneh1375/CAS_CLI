@@ -134,6 +134,7 @@ public class LoginController {
             request.getSession().setAttribute("token", token);
 
             HttpResponse<String> res2 = Unirest.post(callback)
+                    .header("Content-Type", "application/json")
                     .body(new JSONObject()
                             .put("token", token)
                     ).asString();
