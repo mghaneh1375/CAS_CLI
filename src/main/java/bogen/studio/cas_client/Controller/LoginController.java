@@ -138,7 +138,7 @@ public class LoginController {
                 modelAndView.addObject("error", "نام کاربری و یا رمزعبور وارد شده استباه است.");
                 modelAndView.setViewName("login");
 
-                response.setHeader("Location", "http://" + request.getHeader("host") + "/login?redirectUrl=" + redirectUrl + "&callback=" + callback + "&error");
+                response.setHeader("Location", "https://" + request.getHeader("host") + "/cas/login?redirectUrl=" + redirectUrl + "&callback=" + callback + "&error");
                 response.setStatus(302);
                 return;
             }
