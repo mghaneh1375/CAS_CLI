@@ -108,8 +108,12 @@ public class LoginController {
     }
 
     @GetMapping("/logout")
-    public void logout(HttpServletRequest request) {
+    public void logout(HttpServletRequest request,
+                       HttpServletResponse response,
+                       @RequestParam String redirectUrl) {
         request.getSession().removeAttribute("token");
+        response.setHeader("Location", redirectUrl);
+        response.setStatus(302);
     }
 
     @PostMapping("/login")
