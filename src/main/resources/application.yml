@@ -15,3 +15,10 @@ spring:
       suffix: .html
   main:
     allow-bean-definition-overriding: true
+
+cas:
+  address: "http://193.151.137.75:9000/oauth/token"
+#  address: "http://127.0.0.1:9000/oauth/token"
+  clientId: "clientId"
+  password: "Admin123"
+  public-key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtx5XIQ7QRnKZRRDexf7XzZxMhf+hE807qwi0Ul1WWcLt5be7zsHGdOsn3BGGB8BAmeA54qespU7MJFNIW21lQb/XqexShrsiOvVxs8Z75RZfA2UjYwV1tHW58MTIgRdER67aJj0hIofgOFztB0CNRHaehltR3up3tEPnz0HxsuSESmPccU86YJUKyu2QUW7hcrj0yUBeFiFrDhRKel5O9+X862FOE+aSWAaX69hTUTf8CDSXpAlH93xX27Uz5h/bTbSIB2fXbsINe0d4HdX2TQceyBQe+LoNmIfrnTPjyvf67ICGYFkCH8G7zF9851o63sbquWKA6NQ90ydkV/hOtwIDAQAB"

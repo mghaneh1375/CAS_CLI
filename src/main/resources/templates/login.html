@@ -210,7 +210,7 @@
                 <div class="form">
 
                     <div th:if="${param.error}">
-                        <p class="text-danger">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
+                        <p style="color: white" class="text-danger">نام کاربری و یا رمزعبور اشتباه است</p>
                     </div>
 
                     <input name="callback" type="hidden" required th:value="${callback}">
@@ -228,8 +228,8 @@
 
                     </div>
 
-                    <div class="links"> <a href="#">Forgot Password</a> <a href="#">Signup</a>
 
+                    <div th:if="${allowSignUp}" class="links"> <a href="#">Forgot Password</a> <a href="#">Signup</a>
                     </div>
 
                     <div class="inputBox">
