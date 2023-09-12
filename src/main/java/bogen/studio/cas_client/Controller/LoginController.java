@@ -21,6 +21,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
 
 @RestController
+@RequestMapping(path = "/cas")
 public class LoginController {
 
     @Value("${cas.address}")
