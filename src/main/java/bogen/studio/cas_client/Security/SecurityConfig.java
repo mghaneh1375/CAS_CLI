@@ -46,7 +46,7 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                .antMatchers("/login").permitAll()
+                .antMatchers("/cas/**").permitAll()
                 .antMatchers("/static/**", "/favicon.ico").permitAll()
                 .anyRequest().authenticated()
                 .and()
