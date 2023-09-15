@@ -5,8 +5,14 @@ function phoneLogin() {
     text += '<div style="display:flex;flex-direction:column;gap:40px">';
     text +=
         '<div style="display:flex;justify-content: space-between;align-items: baseline;">';
-    text +=
-        '<div style="display:flex;align-items: center;color:white;padding-right: 10px;">ثبت نام/ ورود با تلفن همراه  <div class="icon-mobile-login" style="font-size: 40px"></div></div>';
+
+    if(allowSignUp == "false")
+        text +=
+            '<div style="display:flex;align-items: center;color:white;padding-right: 10px;">ورود با تلفن همراه<div class="icon-mobile-login" style="font-size: 40px"></div></div>';
+    else
+        text +=
+            '<div style="display:flex;align-items: center;color:white;padding-right: 10px;">ثبت نام/ ورود با تلفن همراه  <div class="icon-mobile-login" style="font-size: 40px"></div></div>';
+
     text +=
         '<div style="cursor:pointer;color:white;display: flex;align-self:flex-start;margin: 5px 0px 0px 10px;align-items: center;">';
     text += '<div onClick="location.reload()">بازگشت</div>';
@@ -25,7 +31,7 @@ function phoneLogin() {
     text += "تایید</div>";
     text += "</div>";
     text += "<div>";
-    text += '<div style="background-color:#FF0000">';
+    text += '<div id="signUpErr" style="background-color:#FF0000">';
     text += "</div>";
     text += "</div>";
     text += "</form>";
@@ -72,6 +78,9 @@ function sendSMS() {
                 token = res.token;
                 timeLimitInSeconds = res.reminder;
                 nextStepPhone();
+            }
+            else {
+                $("#signUpErr").empty().append(res.msg);
             }
         }
     });
