@@ -1,46 +1,42 @@
 package bogen.studio.cas_client.Controller;
 
+import bogen.studio.cas_client.DTO.ActivateRequest;
+import bogen.studio.cas_client.DTO.LoginRequest;
+import bogen.studio.cas_client.DTO.SetUsernameRequest;
+import bogen.studio.cas_client.DTO.SignUpRequest;
+import bogen.studio.cas_client.Service.UserService;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
+import javax.validation.Valid;
 import java.util.*;
+
+import static my.common.commonkoochita.Utility.Statics.JSON_NOT_VALID;
+import static my.common.commonkoochita.Utility.Statics.JSON_NOT_VALID_PARAMS;
+import static my.common.commonkoochita.Utility.Utility.*;
 
 @RestController
 @RequestMapping(path = "/cas")
+@Validated
 public class LoginController {
 
-    @Value("${cas.address}")
-    String CAS_SERVER;
+    @Autowired
+    UserService userService;
 
-    @Value("${cas.clientId}")
-    String CLIENT_ID;
-
-    @Value("${cas.password}")
-    String PASSWORD;
-
-    @Value("${cas.public-key}")
-    String PUB_KEY;
-
-    private static final String[] DONT_ALLOW_SIGN_UP = new String[] {
+    private static final String[] DONT_ALLOW_SIGN_UP = new String[]{
             "boom.bogenstudio.com"
     };
 
-    class UUID {
+    public static class UUID {
 
         String uuid;
         String token;
@@ -55,7 +51,7 @@ public class LoginController {
         }
     }
 
-    private static ArrayList<UUID> uuids = new ArrayList<>();
+    public static ArrayList<UUID> uuids = new ArrayList<>();
 
     @GetMapping("/login")
     public ModelAndView get(HttpServletRequest request,
@@ -70,7 +66,7 @@ public class LoginController {
 
             UUID uuid = uuids.stream().filter(e -> e.token.equals(token)).findFirst().orElse(null);
 
-            if(uuid != null && System.currentTimeMillis() - uuid.lastGet > 10000) {
+            if (uuid != null && System.currentTimeMillis() - uuid.lastGet > 10000) {
 
                 HttpResponse<JsonNode> res;
                 try {
@@ -90,7 +86,8 @@ public class LoginController {
                         return null;
                     }
 
-                } catch (UnirestException ignore) {}
+                } catch (UnirestException ignore) {
+                }
 
             }
 
@@ -107,6 +104,61 @@ public class LoginController {
         return modelAndView;
     }
 
+
+    @PostMapping(value = "/signUp")
+    @ResponseBody
+    public String signUp(final @RequestBody @Valid SignUpRequest signUpRequest) {
+
+        try {
+
+//            JSONObject jsonObject = convertPersian(new JSONObject(json));
+
+//            String value = jsonObject.getString("value");
+//            String via = jsonObject.getString("via");
+
+//            if (via.equalsIgnoreCase(AuthVia.MAIL.getName()) && !isValidMail(value))
+//                return generateErr("ایمیل وارد شده معتبر نمی باشد");
+
+//            if (via.equalsIgnoreCase(AuthVia.SMS.getName()) && !PhoneValidator.isValid(value))
+//                return generateErr("شماره همراه وارد شده معتبر نمی باشد");
+
+            return userService.signUp(
+                    signUpRequest.getVia(),
+                    signUpRequest.getValue()
+            );
+
+        } catch (Exception x) {
+            printException(x);
+        }
+
+        return JSON_NOT_VALID;
+    }
+
+    //    @PostMapping(value = "/resendCode")
+//    @ResponseBody
+//    public String resendCode(@RequestBody @StrongJSONConstraint(
+//            params = {"token", "value"},
+//            paramsType = {String.class, String.class}
+//    ) @NotBlank String json) {
+//        return UserController.resend(convertPersian(new JSONObject(json)));
+//    }
+//
+    @PostMapping(value = "/checkCode")
+    @ResponseBody
+    public String checkCode(@RequestBody @Valid ActivateRequest activateRequest) {
+
+        if (activateRequest.getCode() < 1000 || activateRequest.getCode() > 9999)
+            return JSON_NOT_VALID_PARAMS;
+
+        return userService.checkCode(activateRequest);
+    }
+
+    @PostMapping(value = "/setUsername")
+    @ResponseBody
+    public String setUsername(@RequestBody @Valid SetUsernameRequest usernameRequest) {
+        return userService.setUsername(usernameRequest);
+    }
+
     @GetMapping("/logout")
     public void logout(HttpServletRequest request,
                        HttpServletResponse response,
@@ -119,71 +171,20 @@ public class LoginController {
     @PostMapping("/login")
     public void login(HttpServletRequest request,
                       HttpServletResponse response,
-                      @RequestParam String username,
-                      @RequestParam String password,
+//                      @RequestBody @Valid LoginRequest loginRequest
+                      @RequestParam String token,
+                      @RequestParam String redirectUrl,
                       @RequestParam String callback,
-                      @RequestParam String redirectUrl
+                      @RequestParam Integer code,
+                      @RequestParam String value
     ) {
-
-        try {
-
-            HttpResponse<JsonNode> res = Unirest.post(CAS_SERVER)
-                    .queryString("grant_type", "password")
-                    .queryString("username", username)
-                    .queryString("password", password)
-                    .basicAuth(CLIENT_ID, PASSWORD).asJson();
-
-            System.out.println(res.getStatus());
-
-            if (res.getStatus() != 200) {
-                ModelAndView modelAndView = new ModelAndView();
-                modelAndView.addObject("callback", callback);
-                modelAndView.addObject("redirectUrl", redirectUrl);
-                modelAndView.addObject("error", "نام کاربری و یا رمزعبور وارد شده استباه است.");
-                modelAndView.setViewName("login");
-
-                response.setHeader("Location", "https://" + request.getHeader("host") + "/cas/login?redirectUrl=" + redirectUrl + "&callback=" + callback + "&error");
-                response.setStatus(302);
-                return;
-            }
-
-            String token = res.getBody().getObject().getString("access_token");
-            request.getSession().setAttribute("token", token);
-
-            res = Unirest.post(callback)
-                    .header("Content-Type", "application/json")
-                    .body(new JSONObject()
-                            .put("token", token)
-                    ).asJson();
-
-            System.out.println(res.getStatus());
-            System.out.println(res.getStatusText());
-
-            if (res.getStatus() != 200) {
-                return;
-            }
-
-            byte[] pubkeyder = Base64.getDecoder().decode(PUB_KEY);
-            PublicKey pubkey;
-            try {
-                pubkey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(pubkeyder));
-                Claims claims = Jwts.parser().setSigningKey(pubkey).parseClaimsJws(token).getBody();
-
-                String uuid = res.getBody().getObject().getString("data");
-                uuids.add(new UUID(uuid, token, claims.getExpiration().getTime()));
-
-                response.setHeader("Location", redirectUrl + "?uuid=" + uuid);
-                response.setStatus(302);
-
-            } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-                throw new RuntimeException(e);
-            }
-
-
-        } catch (UnirestException e) {
-            e.printStackTrace();
-        }
-
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setCallback(callback);
+        loginRequest.setCode(code);
+        loginRequest.setToken(token);
+        loginRequest.setRedirectUrl(redirectUrl);
+        loginRequest.setValue(value);
+        userService.signIn(request, response, loginRequest);
     }
 
 }

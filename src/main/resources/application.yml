@@ -4,17 +4,43 @@ server:
 security:
   jwt:
     public-key: classpath:public.txt
+
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: DEBUG
+
 spring:
+  main:
+    allow-bean-definition-overriding: true
+
   jackson:
     serialization:
+      fail-on-empty-beans: false
       INDENT_OUTPUT: true
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: koochita
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
   thymeleaf:
     prefix: classpath:/templates/
+
   mvc:
     view:
       suffix: .html
-  main:
-    allow-bean-definition-overriding: true
+
+dev_mode: true
 
 cas:
   address: "http://193.151.137.75:9000/oauth/token"
