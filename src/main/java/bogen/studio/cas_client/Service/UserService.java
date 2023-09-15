@@ -37,6 +37,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
 
+import static bogen.studio.cas_client.Controller.LoginController.DONT_ALLOW_SIGN_UP;
 import static bogen.studio.cas_client.Controller.LoginController.uuids;
 import static bogen.studio.cas_client.Utility.StaticValues.*;
 import static bogen.studio.cas_client.Utility.Utility.randInt;
@@ -113,7 +114,7 @@ public class UserService {
         return token;
     }
 
-    public String signUp(AuthVia via, String value) {
+    public String signUp(AuthVia via, String value, String callback) {
 
         boolean isNewPerson = true;
 
@@ -128,6 +129,13 @@ public class UserService {
                         )
         )
             isNewPerson = false;
+
+        if(isNewPerson) {
+            boolean allowSignUp = Arrays.stream(DONT_ALLOW_SIGN_UP).noneMatch(callback::contains);
+            if(!allowSignUp)
+                return generateErr("تنها امکان ورود به سیستم مجاز است");
+        }
+
 
         String password = isNewPerson ? "123456" : null;
 

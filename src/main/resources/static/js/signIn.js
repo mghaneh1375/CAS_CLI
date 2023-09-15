@@ -65,6 +65,7 @@ function sendSMS() {
         data: JSON.stringify({
             value: phone.toString(),
             via: 'SMS',
+            callback: callback
         }),
         success: function (res) {
             if (res.status === 'ok') {

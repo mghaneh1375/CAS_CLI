@@ -10,5 +10,6 @@ public class SignUpRequest {
 
     private String value;
     private AuthVia via;
+    private String callback;
 
 }

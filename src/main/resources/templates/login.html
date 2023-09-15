@@ -51,7 +51,8 @@
                             onclick="phoneLogin()"
                             style="background-color: #4dc7bc"
                     >
-                        <div style="white-space: nowrap">ثبت نام/ ورود با تلفن همراه</div>
+                        <div th:if="${allowSignUp}" style="white-space: nowrap">ثبت نام/ ورود با تلفن همراه</div>
+                        <div th:unless="${allowSignUp}" style="white-space: nowrap">ورود با تلفن همراه</div>
                         <div class="icon-mobile-login" style="font-size: 40px"></div>
                     </div>
                     <div
@@ -84,6 +85,10 @@
         </div>
     </div>
 
+    <script>
+        var callback = [[${redirectUrl}]];
+        var allowSignUp = [[${allowSignUp}]];
+    </script>
     <script th:src="@{/js/signIn.js}"></script>
 
     <form id="signInForm" class="hidden" th:action="@{/cas/login}" method="post">
