@@ -161,7 +161,7 @@ public class UserService {
         );
 
         if (activation == null)
-            return JSON_NOT_VALID_PARAMS;
+            return generateErr("کد وارد شده اشتباه است");
 
         if (activation.getCreatedAt() < System.currentTimeMillis() - SMS_VALIDATION_EXPIRATION_MSEC) {
             activationRepository.delete(activation);

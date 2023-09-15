@@ -125,7 +125,7 @@ function nextStepPhone() {
     text += "</div>";
     text += "</div>";
     text += "<div>";
-    text += '<div style="background-color:#FF0000">';
+    text += '<div id="verificationCodeErr" style="background-color:#FF0000">';
     text += "</div>";
     text += "</div>";
     text += "</form>";
@@ -198,6 +198,9 @@ function chooseUsername() {
                 $("#signInCode").val(code);
                 $("#signInForm").submit();
             }
+            else {
+                $("#chooseUsernameErr").empty().append(res.msg);
+            }
 
         }
     });
@@ -236,7 +239,9 @@ function sendVerificationCode() {
                 }
                 else
                     stepTwoPhone();
-
+            }
+            else {
+                $("#verificationCodeErr").empty().append(res.msg);
             }
 
         }
@@ -288,7 +293,7 @@ function stepTwoPhone() {
     text += "</div>";
     text += "</div>";
     text += "<div>";
-    text += '<div style="background-color:#FF0000">';
+    text += '<div id="chooseUsernameErr" style="background-color:#FF0000">';
     text += "</div>";
     text += "</div>";
     text += "</form>";
