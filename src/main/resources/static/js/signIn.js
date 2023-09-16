@@ -1,3 +1,25 @@
+var currElemId;
+
+$(document).ready(function () {
+
+    $.ajaxSetup({
+        error : function(jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status === 400) {
+
+                let errors = JSON.parse(jqXHR.responseJSON.msg.substr(jqXHR.responseJSON.msg.indexOf("{")));
+                let errs = "";
+
+                Object.keys(errors).forEach(key => {
+                    errs += "<p>" + errors[key] + "</p>";
+                });
+
+                $("#" + currElemId).empty().append(errs);
+            }
+        }
+    });
+
+});
+
 function phoneLogin() {
     var text = "";
     var html = "";
@@ -41,6 +63,8 @@ function phoneLogin() {
     $("#form").css("background-color", "#4DC7BC").empty().append(text);
     html += " (:(:(:(:(:(:(:سلام";
     $("#caption").empty().append(html);
+
+    currElemId = "signUpErr";
 }
 
 function isNumber(evt) {

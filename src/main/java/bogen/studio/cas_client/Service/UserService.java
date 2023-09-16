@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,8 +39,7 @@ import java.util.*;
 import static bogen.studio.cas_client.Controller.LoginController.DONT_ALLOW_SIGN_UP;
 import static bogen.studio.cas_client.Controller.LoginController.uuids;
 import static bogen.studio.cas_client.Utility.StaticValues.*;
-import static bogen.studio.cas_client.Utility.Utility.randInt;
-import static bogen.studio.cas_client.Utility.Utility.randInvitationCode;
+import static bogen.studio.cas_client.Utility.Utility.*;
 import static my.common.commonkoochita.Utility.Statics.*;
 import static my.common.commonkoochita.Utility.Utility.generateErr;
 import static my.common.commonkoochita.Utility.Utility.generateSuccessMsg;
@@ -109,8 +107,8 @@ public class UserService {
 
         activationRepository.insert(activation);
 
-//        if (via.equalsIgnoreCase(AuthVia.SMS.getName()))
-//            Utility.sendSMS(code, value);
+        if (via.equals(AuthVia.SMS))
+            sendSMS(value, code + "", null, null, "klogin");
 //        if (via.equals("email") || via.equals("both"))
 //            Utility.sendMail(code + "", "verification code", "signUp", null);
 

@@ -1,5 +1,10 @@
 package bogen.studio.cas_client.Utility;
 
+import bogen.studio.cas_client.Kavenegar.KavenegarApi;
+import bogen.studio.cas_client.Kavenegar.excepctions.ApiException;
+import bogen.studio.cas_client.Kavenegar.excepctions.HttpException;
+import bogen.studio.cas_client.Kavenegar.models.SendResult;
+import my.common.commonkoochita.Validator.PhoneValidator;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.net.URI;
@@ -23,6 +28,8 @@ public class Utility {
     public static String getDomainName(String url) throws URISyntaxException {
         URI uri = new URI(url);
         String domain = uri.getHost();
+        if(domain == null)
+            return "";
         return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 
@@ -58,5 +65,42 @@ public class Utility {
         }
 
         return r;
+    }
+
+    public static boolean sendSMS(String receptor, String token,
+                                  String token2, String token3,
+                                  String template
+    ) {
+
+        if(DEV_MODE)
+            return true;
+
+        receptor = convertPersianDigits(receptor);
+
+        if(!PhoneValidator.isValid(receptor)) {
+            System.out.println("not valid phone num");
+            return false;
+        }
+
+        try {
+            KavenegarApi api = new KavenegarApi("4836666C696247676762504666386A336846366163773D3D");
+            SendResult Result = api.verifyLookup(receptor, token, token2, token3, template);
+
+            if(Result.getStatus() == 6 ||
+                    Result.getStatus() == 11 ||
+                    Result.getStatus() == 13 ||
+                    Result.getStatus() == 14 ||
+                    Result.getStatus() == 100
+            )
+                return false;
+
+            return true;
+        } catch (HttpException ex) {
+            System.out.print("HttpException  : " + ex.getMessage());
+        } catch (ApiException ex) {
+            System.out.print("ApiException : " + ex.getMessage());
+        }
+
+        return false;
     }
 }
