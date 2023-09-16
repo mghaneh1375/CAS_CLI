@@ -40,7 +40,11 @@ public class SignUpRequestValidator implements ConstraintValidator<ValidatedSign
         }
 
         try {
+
             String domain = getDomainName(dto.getCallback());
+
+            System.out.println(domain);
+
             if(Arrays.stream(VALID_DOMAINS).noneMatch(domain::contains)) {
                 errs.put("callback", "دامنه مورد نظر معتبر نمی باشد");
                 isErrored = true;
