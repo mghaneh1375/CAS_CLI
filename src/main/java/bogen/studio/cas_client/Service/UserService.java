@@ -296,14 +296,16 @@ public class UserService {
             String token = res.getBody().getObject().getString("access_token");
             request.getSession().setAttribute("token", token);
 
-            res = Unirest.post(loginRequest.getCallback())
+            HttpResponse<String> res2 = Unirest.post(loginRequest.getCallback())
                     .header("Content-Type", "application/json")
                     .body(new JSONObject()
                             .put("token", token)
-                    ).asJson();
+                    ).asString();
 
             System.out.println("callback res is = " +  res.getStatus());
             System.out.println("callback getStatusText is = " + res.getStatusText());
+
+            System.out.println(res2.getBody());
 
             if (res.getStatus() != 200) {
                 return;
