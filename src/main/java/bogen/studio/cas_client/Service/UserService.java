@@ -288,7 +288,7 @@ public class UserService {
             System.out.println(res.getStatus());
 
             if (res.getStatus() != 200) {
-                response.setHeader("Location", "https://" + request.getHeader("host") + "/cas/login?redirectUrl=" + loginRequest.getRedirectUrl() + "&callback=" + loginRequest.getCallback() + "&error");
+                response.setHeader("Location", "https://tour.business.bogenstudio.com/cas/login?redirectUrl=" + loginRequest.getRedirectUrl() + "&callback=" + loginRequest.getCallback() + "&error");
                 response.setStatus(302);
                 return;
             }
@@ -328,7 +328,7 @@ public class UserService {
 
         } catch (UnirestException e) {
             request.getSession().removeAttribute("token");
-            response.setHeader("Location", "https://" + request.getHeader("host") + "/cas/login?redirectUrl=" + loginRequest.getRedirectUrl() + "&callback=" + loginRequest.getCallback() + "&error");
+            response.setHeader("Location", "https://tour.business.bogenstudio.com/cas/login?redirectUrl=" + loginRequest.getRedirectUrl() + "&callback=" + loginRequest.getCallback() + "&error");
             response.setStatus(302);
             e.printStackTrace();
         }
