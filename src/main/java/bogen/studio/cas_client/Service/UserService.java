@@ -298,17 +298,15 @@ public class UserService {
 
             System.out.println(loginRequest.getCallback());
 
-            HttpResponse<String> res2 = Unirest.post(loginRequest.getCallback())
+            res = Unirest.post(loginRequest.getCallback())
                     .header("Content-Type", "application/json")
                     .body(new JSONObject()
                             .put("token", token)
-                    ).asString();
+                    ).asJson();
 
             System.out.println("callback res is = " +  res.getStatus());
             System.out.println("callback getStatusText is = " + res.getStatusText());
             System.out.println(loginRequest.getRedirectUrl());
-
-            System.out.println(res2.getBody());
 
             if (res.getStatus() != 200) {
                 return;
