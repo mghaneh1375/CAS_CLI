@@ -74,6 +74,9 @@ public class UserService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    public static final String[] JUST_ADMIN = new String[]{
+            "panel.koochita.com",
+    };
 
     public PairValue existSMS(String value) {
 
@@ -116,26 +119,23 @@ public class UserService {
 
     public String signUp(AuthVia via, String value, String callback) {
 
-        boolean isNewPerson = true;
+        Optional<CommonUser> userOptional = via.equals(AuthVia.MAIL) ?
+            userRepository.findByEmail(value) : userRepository.findByPhone(value);
 
-        if (
-                (
-                        via.equals(AuthVia.MAIL) &&
-                                userRepository.findByMailCount(value) > 0
-                ) ||
-                        (
-                                via.equals(AuthVia.SMS) &&
-                                        userRepository.findByPhoneCount(value) > 0
-                        )
-        )
-            isNewPerson = false;
+        boolean isNewPerson = userOptional.isEmpty();
 
         if(isNewPerson) {
             boolean allowSignUp = Arrays.stream(DONT_ALLOW_SIGN_UP).noneMatch(callback::contains);
             if(!allowSignUp)
                 return generateErr("تنها امکان ورود به سیستم مجاز است");
         }
+        else {
 
+            boolean allowNonAdmin = Arrays.stream(JUST_ADMIN).noneMatch(callback::contains);
+            if(!allowNonAdmin && !userOptional.get().getRoles().contains("ADMIN"))
+                return generateErr("تنها ادمین امکان ورود به سایت موردنظر را دارد");
+
+        }
 
         String password = isNewPerson ? "123456" : null;
 

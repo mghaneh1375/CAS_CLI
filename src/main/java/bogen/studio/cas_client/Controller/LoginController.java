@@ -33,7 +33,8 @@ public class LoginController {
     UserService userService;
 
     public static final String[] DONT_ALLOW_SIGN_UP = new String[]{
-            "boom.bogenstudio.com"
+            "boom.bogenstudio.com",
+            "panel.koochita.com",
     };
 
     public static class UUID {
