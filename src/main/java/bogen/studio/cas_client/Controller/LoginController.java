@@ -112,17 +112,6 @@ public class LoginController {
 
         try {
 
-//            JSONObject jsonObject = convertPersian(new JSONObject(json));
-
-//            String value = jsonObject.getString("value");
-//            String via = jsonObject.getString("via");
-
-//            if (via.equalsIgnoreCase(AuthVia.MAIL.getName()) && !isValidMail(value))
-//                return generateErr("ایمیل وارد شده معتبر نمی باشد");
-
-//            if (via.equalsIgnoreCase(AuthVia.SMS.getName()) && !PhoneValidator.isValid(value))
-//                return generateErr("شماره همراه وارد شده معتبر نمی باشد");
-
             return userService.signUp(
                     signUpRequest.getVia(),
                     signUpRequest.getValue(),

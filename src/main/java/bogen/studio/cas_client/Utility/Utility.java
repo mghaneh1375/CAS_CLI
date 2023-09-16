@@ -2,6 +2,8 @@ package bogen.studio.cas_client.Utility;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -16,6 +18,12 @@ public class Utility {
 
     public static boolean isValidMail(String in) {
         return mailPattern.matcher(convertPersianDigits(in)).matches();
+    }
+
+    public static String getDomainName(String url) throws URISyntaxException {
+        URI uri = new URI(url);
+        String domain = uri.getHost();
+        return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 
     public static int randInt() {
