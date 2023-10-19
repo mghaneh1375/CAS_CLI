@@ -323,8 +323,9 @@ public class UserService {
 
                 System.out.println(URLEncoder.encode(loginRequest.getRedirectUrl() + "?uuid=" + uuid, StandardCharsets.UTF_8));
 
-//                response.setHeader("Location", URLEncoder.encode(loginRequest.getRedirectUrl() + "?uuid=" + uuid, StandardCharsets.UTF_8));
-                response.setHeader("Location", loginRequest.getRedirectUrl() + "?uuid=" + uuid);
+
+                response.encodeRedirectURL(loginRequest.getRedirectUrl() + "?uuid=" + uuid);
+//                response.setHeader("Location", loginRequest.getRedirectUrl() + "?uuid=" + uuid);
                 response.setStatus(302);
 
             } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
