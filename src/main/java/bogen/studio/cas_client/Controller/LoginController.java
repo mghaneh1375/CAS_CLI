@@ -18,6 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static my.common.commonkoochita.Utility.Statics.JSON_NOT_VALID;
@@ -82,7 +84,7 @@ public class LoginController {
                         uuid.lastGet = System.currentTimeMillis();
                         uuid.uuid = newUuid;
 
-                        response.setHeader("Location", redirectUrl + "?uuid=" + newUuid);
+                        response.setHeader("Location", URLEncoder.encode(redirectUrl + "?uuid=" + newUuid, StandardCharsets.UTF_8));
                         response.setStatus(302);
                         return null;
                     }
@@ -92,7 +94,7 @@ public class LoginController {
 
             }
 
-            response.setHeader("Location", redirectUrl);
+            response.setHeader("Location", URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8));
             response.setStatus(302);
             return null;
         }
@@ -155,7 +157,7 @@ public class LoginController {
                        HttpServletResponse response,
                        @RequestParam String redirectUrl) {
         request.getSession().removeAttribute("token");
-        response.setHeader("Location", redirectUrl);
+        response.setHeader("Location", URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8));
         response.setStatus(302);
     }
 
