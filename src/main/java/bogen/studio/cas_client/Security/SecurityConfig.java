@@ -45,7 +45,7 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
 
         http = http.csrf().disable();
         http = http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).and();
-
+        
         http
                 .authorizeRequests()
                 .antMatchers("/cas/**").permitAll()
@@ -56,7 +56,8 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/static/**", "/favicon.ico").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .headers().frameOptions().sameOrigin();
+                .headers().frameOptions().sameOrigin()
+                .httpStrictTransportSecurity().disable();
     }
 
     @Bean
