@@ -321,6 +321,7 @@ public class UserService {
                 String uuid = res.getBody().getObject().getString("data");
                 uuids.add(new LoginController.UUID(uuid, token, claims.getExpiration().getTime()));
 
+                System.out.println(URLEncoder.encode(loginRequest.getRedirectUrl() + "?uuid=" + uuid, StandardCharsets.UTF_8));
 
                 response.setHeader("Location", URLEncoder.encode(loginRequest.getRedirectUrl() + "?uuid=" + uuid, StandardCharsets.UTF_8));
                 response.setStatus(302);
