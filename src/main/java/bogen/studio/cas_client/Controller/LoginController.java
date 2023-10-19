@@ -11,10 +11,11 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -163,14 +164,14 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public RedirectView login(HttpServletRequest request,
-                              HttpServletResponse response,
+    public ResponseEntity<Object> login(HttpServletRequest request,
+                                        HttpServletResponse response,
 //                      @RequestBody @Valid LoginRequest loginRequest
-                              @RequestParam String token,
-                              @RequestParam String redirectUrl,
-                              @RequestParam String callback,
-                              @RequestParam Integer code,
-                              @RequestParam String value
+                                        @RequestParam String token,
+                                        @RequestParam String redirectUrl,
+                                        @RequestParam String callback,
+                                        @RequestParam Integer code,
+                                        @RequestParam String value
     ) {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setCallback(callback);

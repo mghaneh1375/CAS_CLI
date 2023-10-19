@@ -24,13 +24,16 @@ import org.bson.types.ObjectId;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
@@ -246,7 +249,7 @@ public class UserService {
         return JSON_OK;
     }
 
-    public RedirectView signIn(
+    public ResponseEntity<Object> signIn(
             HttpServletRequest request,
             HttpServletResponse response,
             LoginRequest loginRequest) {
@@ -323,11 +326,13 @@ public class UserService {
                 String uuid = res.getBody().getObject().getString("data");
                 uuids.add(new LoginController.UUID(uuid, token, claims.getExpiration().getTime()));
 
-                RedirectView redirectView = new RedirectView();
-                redirectView.setUrl(URLEncoder.encode(loginRequest.getRedirectUrl() + "?uuid=" + uuid, StandardCharsets.UTF_8));
-                return redirectView;
+                URI externalUri = new URI(URLEncoder.encode(loginRequest.getRedirectUrl() + "?uuid=" + uuid, StandardCharsets.UTF_8));
+                HttpHeaders httpHeaders = new HttpHeaders();
+                httpHeaders.setLocation(externalUri);
 
-            } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+                return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+
+            } catch (InvalidKeySpecException | NoSuchAlgorithmException | URISyntaxException e) {
                 throw new RuntimeException(e);
             }
 
