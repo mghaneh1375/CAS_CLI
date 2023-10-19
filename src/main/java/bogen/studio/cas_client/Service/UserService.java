@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -245,7 +246,7 @@ public class UserService {
         return JSON_OK;
     }
 
-    public String signIn(
+    public RedirectView signIn(
             HttpServletRequest request,
             HttpServletResponse response,
             LoginRequest loginRequest) {
@@ -310,7 +311,7 @@ public class UserService {
             System.out.println(loginRequest.getRedirectUrl());
 
             if (res.getStatus() != 200) {
-                return token;
+                return null;
             }
 
             byte[] pubkeyder = Base64.getDecoder().decode(PUB_KEY);
@@ -322,16 +323,11 @@ public class UserService {
                 String uuid = res.getBody().getObject().getString("data");
                 uuids.add(new LoginController.UUID(uuid, token, claims.getExpiration().getTime()));
 
-//                System.out.println(URLEncoder.encode(loginRequest.getRedirectUrl() + "?uuid=" + uuid, StandardCharsets.UTF_8));
-//
-//
-//                response.setHeader("Location", response.encodeRedirectURL(loginRequest.getRedirectUrl() + "?uuid=" + uuid));
-////                response.setHeader("Location", loginRequest.getRedirectUrl() + "?uuid=" + uuid);
-//                response.setStatus(302);
-                response.sendRedirect(URLEncoder.encode(loginRequest.getRedirectUrl() + "?uuid=" + uuid, StandardCharsets.UTF_8));
-//                return "redirect:" + ;
+                RedirectView redirectView = new RedirectView();
+                redirectView.setUrl(URLEncoder.encode(loginRequest.getRedirectUrl() + "?uuid=" + uuid, StandardCharsets.UTF_8));
+                return redirectView;
 
-            } catch (InvalidKeySpecException | NoSuchAlgorithmException | IOException e) {
+            } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }
 

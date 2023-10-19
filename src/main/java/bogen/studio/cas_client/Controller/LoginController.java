@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -162,14 +163,14 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public void login(HttpServletRequest request,
-                      HttpServletResponse response,
+    public RedirectView login(HttpServletRequest request,
+                              HttpServletResponse response,
 //                      @RequestBody @Valid LoginRequest loginRequest
-                      @RequestParam String token,
-                      @RequestParam String redirectUrl,
-                      @RequestParam String callback,
-                      @RequestParam Integer code,
-                      @RequestParam String value
+                              @RequestParam String token,
+                              @RequestParam String redirectUrl,
+                              @RequestParam String callback,
+                              @RequestParam Integer code,
+                              @RequestParam String value
     ) {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setCallback(callback);
@@ -177,7 +178,7 @@ public class LoginController {
         loginRequest.setToken(token);
         loginRequest.setRedirectUrl(redirectUrl);
         loginRequest.setValue(value);
-        userService.signIn(request, response, loginRequest);
+        return userService.signIn(request, response, loginRequest);
     }
 
 }
