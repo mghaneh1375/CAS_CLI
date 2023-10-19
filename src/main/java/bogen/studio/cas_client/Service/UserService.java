@@ -326,7 +326,7 @@ public class UserService {
                 String uuid = res.getBody().getObject().getString("data");
                 uuids.add(new LoginController.UUID(uuid, token, claims.getExpiration().getTime()));
 
-                URI externalUri = new URI(URLEncoder.encode(loginRequest.getRedirectUrl() + "?uuid=" + uuid, StandardCharsets.UTF_8));
+                URI externalUri = new URI(loginRequest.getRedirectUrl() + "?uuid=" + uuid);
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.setLocation(externalUri);
 
