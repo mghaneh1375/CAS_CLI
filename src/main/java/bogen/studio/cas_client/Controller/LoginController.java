@@ -162,7 +162,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public void login(HttpServletRequest request,
+    public String login(HttpServletRequest request,
                       HttpServletResponse response,
 //                      @RequestBody @Valid LoginRequest loginRequest
                       @RequestParam String token,
@@ -177,7 +177,7 @@ public class LoginController {
         loginRequest.setToken(token);
         loginRequest.setRedirectUrl(redirectUrl);
         loginRequest.setValue(value);
-        userService.signIn(request, response, loginRequest);
+        return userService.signIn(request, response, loginRequest);
     }
 
 }

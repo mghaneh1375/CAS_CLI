@@ -244,7 +244,7 @@ public class UserService {
         return JSON_OK;
     }
 
-    public void signIn(
+    public String signIn(
             HttpServletRequest request,
             HttpServletResponse response,
             LoginRequest loginRequest) {
@@ -258,15 +258,15 @@ public class UserService {
             );
 
             if (activation == null)
-                return;
+                return null;
 
             if (activation.getCreatedAt() < System.currentTimeMillis() - SMS_VALIDATION_EXPIRATION_MSEC) {
                 activationRepository.delete(activation);
-                return;
+                return null;
             }
 
             if(!activation.isUsed())
-                return;
+                return null;
 
             activationRepository.delete(activation);
             Optional<CommonUser> userOptional;
@@ -277,7 +277,7 @@ public class UserService {
                 userOptional = userRepository.findByEmail(activation.getValue());
 
             if(userOptional.isEmpty())
-                return;
+                return null;
 
             HttpResponse<JsonNode> res = Unirest.post(CAS_SERVER)
                     .queryString("grant_type", "password")
@@ -290,7 +290,7 @@ public class UserService {
             if (res.getStatus() != 200) {
                 response.setHeader("Location", "https://tour.bogenstudio.com/cas/login?redirectUrl=" + loginRequest.getRedirectUrl() + "&callback=" + loginRequest.getCallback() + "&error");
                 response.setStatus(302);
-                return;
+                return null;
             }
 
             String token = res.getBody().getObject().getString("access_token");
@@ -309,7 +309,7 @@ public class UserService {
             System.out.println(loginRequest.getRedirectUrl());
 
             if (res.getStatus() != 200) {
-                return;
+                return token;
             }
 
             byte[] pubkeyder = Base64.getDecoder().decode(PUB_KEY);
@@ -321,12 +321,9 @@ public class UserService {
                 String uuid = res.getBody().getObject().getString("data");
                 uuids.add(new LoginController.UUID(uuid, token, claims.getExpiration().getTime()));
 
-                System.out.println(URLEncoder.encode(loginRequest.getRedirectUrl() + "?uuid=" + uuid, StandardCharsets.UTF_8));
-
-
-                response.encodeRedirectURL(loginRequest.getRedirectUrl() + "?uuid=" + uuid);
+                String url = response.encodeRedirectURL(loginRequest.getRedirectUrl() + "?uuid=" + uuid);
 //                response.setHeader("Location", loginRequest.getRedirectUrl() + "?uuid=" + uuid);
-                response.setStatus(302);
+                return "redirect:" + url;
 
             } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
@@ -341,6 +338,7 @@ public class UserService {
         }
 
 
+        return null;
     }
 
 }
