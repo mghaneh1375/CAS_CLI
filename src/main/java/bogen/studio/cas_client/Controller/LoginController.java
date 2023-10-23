@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import org.springframework.http.HttpStatus;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
