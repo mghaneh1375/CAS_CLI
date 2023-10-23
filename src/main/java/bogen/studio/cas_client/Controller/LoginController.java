@@ -22,7 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+
 import org.springframework.http.HttpStatus;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
@@ -159,15 +161,19 @@ public class LoginController {
 
     @GetMapping("/logout")
     public ResponseEntity<Object> logout(HttpServletRequest request,
-                       HttpServletResponse response,
-                       @RequestParam String redirectUrl) {
-        request.getSession().removeAttribute("token");
+                                         HttpServletResponse response,
+                                         @RequestParam String redirectUrl) {
+        try {
+            request.getSession().removeAttribute("token");
 
-        URI externalUri = new URI(redirectUrl);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(externalUri);
+            URI externalUri = new URI(redirectUrl);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setLocation(externalUri);
 
-        return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+            return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @PostMapping("/login")
