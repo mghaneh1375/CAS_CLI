@@ -20,9 +20,11 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
 
 import static my.common.commonkoochita.Utility.Statics.JSON_NOT_VALID;
 import static my.common.commonkoochita.Utility.Statics.JSON_NOT_VALID_PARAMS;
@@ -155,12 +157,16 @@ public class LoginController {
     }
 
     @GetMapping("/logout")
-    public void logout(HttpServletRequest request,
+    public ResponseEntity<Object> logout(HttpServletRequest request,
                        HttpServletResponse response,
                        @RequestParam String redirectUrl) {
         request.getSession().removeAttribute("token");
-        response.setHeader("Location", URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8));
-        response.setStatus(302);
+
+        URI externalUri = new URI(redirectUrl);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(externalUri);
+
+        return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
     }
 
     @PostMapping("/login")
