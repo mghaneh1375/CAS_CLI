@@ -64,7 +64,7 @@ public class LoginController {
     public static ArrayList<UUID> uuids = new ArrayList<>();
 
     @GetMapping("/login")
-    public ModelAndView get(HttpServletRequest request,
+    public Object get(HttpServletRequest request,
                             HttpServletResponse response,
                             @RequestParam(value = "callback") String callback,
                             @RequestParam(value = "redirectUrl") String redirectUrl
@@ -87,13 +87,22 @@ public class LoginController {
                             ).asJson();
 
                     if (res.getStatus() == 200) {
+
                         String newUuid = res.getBody().getObject().getString("data");
                         uuid.lastGet = System.currentTimeMillis();
                         uuid.uuid = newUuid;
 
-                        response.setHeader("Location", URLEncoder.encode(redirectUrl + "?uuid=" + newUuid, StandardCharsets.UTF_8));
-                        response.setStatus(302);
-                        return null;
+                        try {
+                            URI externalUri = new URI(URLEncoder.encode(redirectUrl + "?uuid=" + newUuid, StandardCharsets.UTF_8));
+                            HttpHeaders httpHeaders = new HttpHeaders();
+                            httpHeaders.setLocation(externalUri);
+
+                            return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+                        }
+                        catch (Exception xx) {
+                            throw new RuntimeException(xx);
+                        }
+
                     }
 
                 } catch (UnirestException ignore) {
@@ -101,9 +110,16 @@ public class LoginController {
 
             }
 
-            response.setHeader("Location", URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8));
-            response.setStatus(302);
-            return null;
+            try {
+                URI externalUri = new URI(URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8));
+                HttpHeaders httpHeaders = new HttpHeaders();
+                httpHeaders.setLocation(externalUri);
+
+                return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+            }
+            catch (Exception xx) {
+                throw new RuntimeException(xx);
+            }
         }
 
         ModelAndView modelAndView = new ModelAndView();
