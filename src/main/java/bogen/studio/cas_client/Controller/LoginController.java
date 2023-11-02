@@ -178,8 +178,6 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(HttpServletRequest request,
-                                        HttpServletResponse response,
-//                      @RequestBody @Valid LoginRequest loginRequest
                                         @RequestParam String token,
                                         @RequestParam String redirectUrl,
                                         @RequestParam String callback,
@@ -192,7 +190,7 @@ public class LoginController {
         loginRequest.setToken(token);
         loginRequest.setRedirectUrl(redirectUrl);
         loginRequest.setValue(value);
-        return userService.signIn(request, response, loginRequest);
+        return userService.signIn(request, loginRequest);
     }
 
 }

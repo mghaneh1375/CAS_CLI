@@ -31,11 +31,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -251,7 +248,6 @@ public class UserService {
 
     public ResponseEntity<Object> signIn(
             HttpServletRequest request,
-            HttpServletResponse response,
             LoginRequest loginRequest) {
 
         try {
@@ -293,9 +289,18 @@ public class UserService {
             System.out.println(res.getStatus());
 
             if (res.getStatus() != 200) {
-                response.setHeader("Location", "https://tour.bogenstudio.com/cas/login?redirectUrl=" + loginRequest.getRedirectUrl() + "&callback=" + loginRequest.getCallback() + "&error");
-                response.setStatus(302);
-                return null;
+
+                try {
+                    URI externalUri = new URI("https://tour.bogenstudio.com/cas/login?redirectUrl=" + loginRequest.getRedirectUrl() + "&callback=" + loginRequest.getCallback() + "&error");
+                    HttpHeaders httpHeaders = new HttpHeaders();
+                    httpHeaders.setLocation(externalUri);
+
+                    return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+                }
+                catch (Exception xx) {
+                    xx.printStackTrace();
+                }
+
             }
 
             String token = res.getBody().getObject().getString("access_token");
@@ -338,14 +343,23 @@ public class UserService {
 
 
         } catch (UnirestException e) {
+
             request.getSession().removeAttribute("token");
-            response.setHeader("Location", "https://tour.bogenstudio.com/cas/login?redirectUrl=" + loginRequest.getRedirectUrl() + "&callback=" + loginRequest.getCallback() + "&error");
-            response.setStatus(302);
-            e.printStackTrace();
+
+            try {
+
+                URI externalUri = new URI("https://tour.bogenstudio.com/cas/login?redirectUrl=" + loginRequest.getRedirectUrl() + "&callback=" + loginRequest.getCallback() + "&error");
+
+                HttpHeaders httpHeaders = new HttpHeaders();
+                httpHeaders.setLocation(externalUri);
+
+                return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+
+            } catch (URISyntaxException ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
-
-        return null;
     }
 
 }
